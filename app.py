@@ -7,11 +7,11 @@ from components.active_camera_table import update_model_status_table
 from utils.input import load_instance
 from classes.inference import kill_dead_threads
 from components.download_component import file_downloader
+import base64
 
-## Mounting model
-video_path = r"C:\Users\Fayyez.Farrukh\Documents\NPI\Og videos\002.mp4"
-region_points = [(500, 450), (550, 450), (550, 900), (500, 900)]
-linear_points = [(500, 450), (500, 1300)]
+def get_base64_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
 
 def main(_args):
 
@@ -35,11 +35,23 @@ def main(_args):
         st.session_state.main_pane_cols = 1
 
     # title of page
-    st.markdown('''<h1 style='text-align: center; font-style: italic; font-size: 56px; margin:0'>
-                    🎁 Autoistics
-                </h1>
-                <br>
-                ''', unsafe_allow_html=True)
+    logo_image_base64 = get_base64_image("assets/logo.png")
+    soliton_image_base64 = get_base64_image("assets/soliton-logo.png")
+    st.markdown(f'''
+    <h1 style='text-align: center; font-style: italic; font-size: 56px; margin: 0; padding: 0; line-height: 56px; margin-left: 0px;'>
+        <img src="data:image/png;base64,{logo_image_base64}" alt="icon" width="80" style="vertical-align: middle; margin-right: 0px; padding-right: 0px;">
+        ountistics
+    </h1>
+        <p style='text-align: center; font-size: 17px;'>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            ~ Powered by
+            <a href="https://www.solitontechnologies.com/" target="_blank">
+                <img src="data:image/png;base64,{soliton_image_base64}" alt="logo" width="80">
+            </a>
+        </p>
+    ''', unsafe_allow_html=True)
 
     st.session_state.main_pane = st.columns([3, 2] if st.session_state.main_pane_cols == 2 else st.session_state.main_pane_cols,
                                             gap="medium",

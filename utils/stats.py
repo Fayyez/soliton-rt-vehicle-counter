@@ -7,7 +7,8 @@ import random
 random.seed()  # Seed the random number generator
 
 def get_theme():
-    theme = st_theme()
+    # theme = st_theme()
+    theme = None
     if theme is None:
         theme = {
             "backgroundColor": "#ffffff",
@@ -37,11 +38,11 @@ def render_statistics():
 
     with tabs[1]:
 
-        layout = st.columns(2)
+        # layout = st.columns(2)
 
-        with layout[0]:
-            fig = draw_chart(st.session_state.data_for_visualization, theme)
-            st.pyplot(fig)
+        # with layout[0]:
+        #     fig = draw_chart(st.session_state.data_for_visualization, theme)
+        #     st.pyplot(fig)
 
-        with layout[1]:
-            st.bar_chart(st.session_state.data_for_visualization, x="class", y="counts")
+        # with layout[1]:
+        st.bar_chart(st.session_state.data_for_visualization, x="class", y="counts")

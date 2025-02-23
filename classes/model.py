@@ -1,6 +1,6 @@
 from copy import deepcopy
 from csv import writer
-from ultralytics import YOLO, solutions
+from ultralytics import YOLO
 from ultralytics.solutions import ObjectCounter
 from cv2 import imshow, waitKey, destroyAllWindows, VideoCapture
 from cv2 import CAP_PROP_POS_FRAMES
@@ -109,7 +109,7 @@ class MODEL:
                     success, im0 = capture.read()
                     if not success:
                         break
-                    tracks = self.__model.track(im0, persist=True, show=False, verbose=False)
+                    tracks = self.__model.track(im0, persist=True, show=False, verbose=True)
                     im0 = object_counter.start_counting(im0, tracks)
 
                     new_classwise_count = object_counter.class_wise_count

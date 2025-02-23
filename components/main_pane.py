@@ -3,9 +3,10 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from utils.input import on_upload, handle_camera_stream, handle_ip_stream, load_instance
 from utils.onlycams import list_hot_cameras_on_my_device
-
+from utils.deleteFiles import delete_all_reports
 def reset_options():
     st.session_state.menu_options = ["Upload", "With IP Address", "Use Camera"]
+
 def display_option_menu():
     with st.session_state.main_pane[0]:
         # heading
@@ -40,7 +41,7 @@ def display_option_menu():
 
         elif st.session_state.selected == "Upload":
             # create and upload file dropbox and opload button
-            uploaded_file =  st.session_state.input_option_bucket.file_uploader(label="Upload Video:hot_pepper:", 
+            uploaded_file =  st.session_state.input_option_bucket.file_uploader(label="Upload Video:hot_pepper:",
                             type=["mp4", "avi", "mov", "mkv"],
                             help="Upload a video file. Allowed formats: mp4, avi, mov, mkv",
                             accept_multiple_files=False)
@@ -53,14 +54,18 @@ def display_option_menu():
             st.session_state.uploaded_file = uploaded_file
 
         elif st.session_state.selected == "With IP Address":
-            IP_address = st.session_state.input_option_bucket.text_input("Enter IP Address", "")
+            form = st.session_state.input_option_bucket.columns(2)
+            username = form[0].text_input("Username") # username input
+            password = form[1].text_input("Password") # password input
+            ip = form[0].text_input("IP Address") # ip address input
+            port = form[1].number_input("Port", value=554) # port input
+            channel_no = form[0].number_input("Channel No", value=1) # channel number input
+            type_no = form[1].number_input("Type No", value=0) # type number input
             with st.session_state.start_button:
-                st.session_state.run_stream_button = st.button("Start Streaming",
-                                            help="Run the model inference and start counting vehicles from netwrook camera input",
-                                            key="run_ip_cam_btn",
-                                            on_click=handle_ip_stream,
-                                            args=(IP_address,),
-                                            use_container_width=True)
+                st.button("Get RTSP Stream",
+                        on_click=handle_ip_stream,
+                        use_container_width=True,
+                        args=(username, password, ip, port, channel_no, type_no)) # button to get the rtsp stream
 
         elif st.session_state.selected == "Use Camera":
             # display all available web cams in dropdown
@@ -73,3 +78,10 @@ def display_option_menu():
                                                             key="run_cam_btn",
                                                             on_click=handle_camera_stream,
                                                             use_container_width=True)
+        # delete all the csv files in the storage folder
+        st.button("🗑️ Delete All Reports",
+                on_click=delete_all_reports,
+                type="primary",
+                help="Warning: This button will delete all the reports generated till now.",
+                use_container_width=True,
+                key="delete_all_reports_btn")

@@ -21,7 +21,7 @@ def active_cams_present() -> bool:
 
 # function to load model and add to the instance
 def add_model_to_instance(source: str, weights: str = "weights/final.pt"):
-    
+
     # fetch instance and add model
     instance: INSTANCE = load_instance()
     # check if given source is valid video capture object
@@ -29,7 +29,7 @@ def add_model_to_instance(source: str, weights: str = "weights/final.pt"):
         cap = VideoCapture(source)
         if not cap.isOpened():
             # if video cpture object cannot be created
-            showDialogBox(heading="Error 03: Invalid Sideo Source",
+            showDialogBox(heading="Error 03: Invalid Video Source",
                         message="The source of video given could not be loaded due to corrupt file, unstable connection or incorrect IP address")
             return
         else:
@@ -44,13 +44,13 @@ def add_model_to_instance(source: str, weights: str = "weights/final.pt"):
     if response == 0:
         return True # true for successful execution of add camera to instance
     elif response == 1:
-        showDialogBox(heading="Error 01: Camera Limit Reached", 
-                      message="Only 5 cameras can be added at a time. Kindly remove active cameras before adding new cameras.")
+        showDialogBox(heading="Error 01: Camera Limit Reached",
+                    message="Only 5 cameras can be added at a time. Kindly remove active cameras before adding new cameras.")
     elif response == 2:
         showDialogBox(heading="Error 02: Camera Duplication",
-                      message="This camera is already present in the active cameras list. Please choose another camera or hav patience.")
+                    message="This camera is already present in the active cameras list. Please choose another camera or hav patience.")
     return False # false indicates failure to add the camera source to instance
-   
+
 def on_upload() -> None:
     if st.session_state.get("uploaded_file") is not None: # if a file is uploaded
         st.session_state.menu_options = ["Upload"]
@@ -59,15 +59,14 @@ def on_upload() -> None:
         with NamedTemporaryFile(delete=False, suffix=video_file.name.split(".")[-1]) as temp:
             temp.write(video_file.read())
             add_model_to_instance(temp.name)
-        
+
     else:
-        # TODO: show error message popup
-        showDialogBox(heading="Upload Error", 
-                      message="File not uploaded properly. file not present, incompatible format or file size > 200mb.")
-        
-def handle_ip_stream(source: str) -> None:
-    st.session_state.menu_options = ["With IP Address"]
-    add_model_to_instance(source)
+        showDialogBox(heading="Upload Error",
+                    message="File not uploaded properly. file not present, incompatible format or file size > 200mb.")
+
+def handle_ip_stream(username: str, password: str, ip: str, port: int = 554, channel_no: int = 1, type_no: int = 0) -> None:
+    url = f"rtsp://{username}:{password}@{ip}:{port}/cam/realmonitor?channel={channel_no}&subtype={type_no}"
+    add_model_to_instance(url)
 
 # handling case of using camera stream
 def handle_camera_stream() -> None:
@@ -75,7 +74,7 @@ def handle_camera_stream() -> None:
     selected_option = str(st.session_state.selected_cam)
     if selected_option == None:
         showDialogBox(heading="Error 05: Camera Not Found",
-                      message="Please select a camera first before trying to use that camera's stream for detections")
+                    message="Please select a camera first before trying to use that camera's stream for detections")
         return None
     all_cams = list_hot_cameras_on_my_device()
     add_model_to_instance(all_cams[selected_option])
